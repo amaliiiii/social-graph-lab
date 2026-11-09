@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лаборатория графов взаимодействий</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Лаборатория графов взаимодействий</h1>
+  <p>Стрелка u → v означает, что u обращает внимание на v: подписан, репостит, упоминает.
+     Сообщения идут против стрелок: от автора к его подписчикам.</p>
+</header>
+
+<main class="layout">
+  <aside class="panel" aria-label="Настройки">
+
+    <section>
+      <h2>Граф</h2>
+      <label for="dataset">Набор данных</label>
+      <select id="dataset"></select>
+      <details class="upload">
+        <summary>Загрузить свой список рёбер</summary>
+        <textarea id="edgesText" rows="6" spellcheck="false"
+                  placeholder="u v&#10;u w 3&#10;# строки «u v» или «u v вес»"></textarea>
+        <div class="row">
+          <input type="file" id="edgesFile" accept=".txt,.csv,.edgelist,text/plain">
+        </div>
+        <label class="check"><input type="checkbox" id="directed" checked> ориентированный граф</label>
+        <button type="button" id="loadText">Построить граф</button>
+      </details>
+      <p id="graphInfo" class="note"></p>
+    </section>
+
+    <section>
+      <h2>Метрика</h2>
+      <label for="metric">Мера центральности</label>
+      <select id="metric"></select>
+      <p id="metricHint" class="note"></p>
+      <label for="topK">Подсветить лучших: <output id="topKOut">5</output></label>
+      <input type="range" id="topK" min="1" max="20" value="5">
+    </section>
+
+    <section>
+      <h2>Каскад</h2>
+      <label for="model">Модель</label>
+      <select id="model">
+        <option value="ic">Независимые каскады (IC)</option>
+        <option value="wc">Взвешенный каскад (1/число подписок)</option>
+        <option value="lt">Линейный порог (LT)</option>
+      </select>
+      <label for="prob">Вероятность передачи p: <output id="probOut">0,10</output></label>
+      <input type="range" id="prob" min="0.01" max="1" step="0.01" value="0.1">
+      <p class="note">Начальные вершины: щёлкните по вершине на рисунке или нажмите кнопку в таблице.</p>
+      <ul id="seedList" class="chips" aria-label="Начальные вершины"></ul>
+      <div class="row">
+        <button type="button" id="seedTop">Взять лучших</button>
+        <button type="button" id="seedClear" class="quiet">Очистить</button>
+      </div>
+      <div class="row">
+        <button type="button" id="runCascade" class="primary">Запустить</button>
+        <button type="button" id="playCascade" class="quiet" disabled>Воспроизвести</button>
+      </div>
+      <label for="stepSlider">Шаг: <output id="stepOut">0</output></label>
+      <input type="range" id="stepSlider" min="0" max="0" value="0" disabled>
+      <p id="cascadeInfo" class="note" aria-live="polite"></p>
+    </section>
+
+    <section>
+      <h2>Сравнение со случайным выбором</h2>
+      <p class="note">Лучшие по выбранной мере и случайные вершины запускаются в одних и тех же случайных мирах, 100 запусков.</p>
+      <button type="button" id="compare">Сравнить</button>
+      <p id="compareInfo" class="note" aria-live="polite"></p>
+    </section>
+
+    <section>
+      <h2>Проверь себя</h2>
+      <p id="quizQ" class="note">Загрузите граф, чтобы получить вопрос.</p>
+      <div class="row">
+        <input type="number" step="any" id="quizAns" aria-label="Ваш ответ" placeholder="ответ">
+        <button type="button" id="quizCheck">Проверить</button>
+        <button type="button" id="quizNext" class="quiet">Другой вопрос</button>
+      </div>
+      <p id="quizRes" class="note" aria-live="polite"></p>
+    </section>
+  </aside>
+
+  <section class="stage">
+    <div class="canvasWrap">
+      <canvas id="canvas" role="img" aria-label="Граф взаимодействий"></canvas>
+      <div id="tip" class="tip" hidden></div>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <table class="top" aria-label="Лучшие вершины по выбранной мере">
+      <caption id="tableCaption"></caption>
+      <thead><tr><th scope="col">№</th><th scope="col">Вершина</th><th scope="col">Значение</th><th scope="col">Начальная</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
